@@ -13,7 +13,7 @@ export const createPost = async (data) => {
 }
 
 export const updatePost = async (id, data) => {
-    const res = await axios.put(`${URL}/update/${id}`, data)
+    const res = await axios.put(`${URL}/posts/update/${id}`, data)
     return res
 }
 

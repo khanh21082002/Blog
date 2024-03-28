@@ -12,9 +12,10 @@ export const postSlice = createSlice({
     initialState,
     reducers: {
         updatePost(state, action) {
-           const {title ='', content = '' } = action.payload
+           const {title ='', content = '' , likeCount = '' } = action.payload
            state.title = title ? title : state.title
            state.content = content ? content : state.content
+           state.likeCount = likeCount ? likeCount : state.likeCount
         },
     }
 });

@@ -1,15 +1,42 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Avatar } from 'antd';
 import moment from 'moment'
+import { useDispatch } from 'react-redux'
+import * as api from '../../../api/index';
+import { useMutationHooks } from '../../../hooks/useMutation';
+
 import { UserOutlined, LikeOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import UpdatePost from "./UpdatePost";
 
 export default function Post({ post }) {
-    const [modalOpen, setModalOpen] = useState(false);
 
+    const [like, setLike] = useState(post.likeCount);
+    const [modalOpen, setModalOpen] = useState(false);
+   
+   const mutation = useMutationHooks(
+       (data) => api.updatePost( post._id , data,),
+       {
+           onSuccess: (data) => {
+               // Cập nhật trạng thái like sau khi mutation thành công
+               setLike(data.likeCount);
+           }
+       }
+   );
+
+    const dispatch = useDispatch();
+
+    const handleLike = async () => {
+        const updatedLikeCount = like + 1;
+        setLike(updatedLikeCount); // Cập nhật trạng thái like ngay lập tức
+        mutation.mutate({ likeCount: updatedLikeCount }); // Gọi API cập nhật likeCount
+    }
     const handleModal = () => {
         setModalOpen(true);
     }
+
+    useEffect(() => {
+        setLike(post.likeCount);
+    }, [post.likeCount]);
 
     return (
         <>
@@ -35,7 +62,7 @@ export default function Post({ post }) {
                 actions={[
 
                     <SettingOutlined key="setting" />,
-                    <EditOutlined key="edit" onClick={() => handleModal()} />,
+                    <EditOutlined key="edit" onClick={handleModal} />,
                     <EllipsisOutlined key="ellipsis" />,
                 ]}
 
@@ -45,8 +72,8 @@ export default function Post({ post }) {
                 <p>{post.content}</p>
 
                 <div className="flex mt-5">
-                    <LikeOutlined />
-                    <p>{post.likeCount} like</p>
+                    <LikeOutlined onClick={handleLike}/>
+                    <p>{like} like</p>
                 </div>
             </Card>
         </>
