@@ -1,4 +1,4 @@
-import React ,{useState} from "react";
+import React, { useState } from "react";
 import { Button } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -14,12 +14,11 @@ export default function HomePage() {
         setModalOpen(true);
     }
 
-
     return (
         <>
             <div className='max-w-7xl mx-auto h-full' >
                 <Header />
-                <PostList />
+                <PostList/>
                 {modalOpen && (
                     <CreatePostModal
                         open={modalOpen}
@@ -36,6 +35,8 @@ export default function HomePage() {
                     size='large'
                     onClick={() => handleModal()}
                 />
+
+               
             </div>
 
         </>

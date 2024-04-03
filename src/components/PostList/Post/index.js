@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { Card, Avatar } from 'antd';
 import moment from 'moment'
-import { useDispatch } from 'react-redux'
 import * as api from '../../../api/index';
 import { useMutationHooks } from '../../../hooks/useMutation';
 
-import { UserOutlined, LikeOutlined, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { UserOutlined, LikeFilled, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import UpdatePost from "./UpdatePost";
 
 export default function Post({ post }) {
 
     const [like, setLike] = useState(post.likeCount);
+    const [isLiked, setIsLiked] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
+    const [updatePost, setUpdatePost] = useState(post);
    
    const mutation = useMutationHooks(
        (data) => api.updatePost( post._id , data,),
@@ -23,20 +24,32 @@ export default function Post({ post }) {
        }
    );
 
-    const dispatch = useDispatch();
+
 
     const handleLike = async () => {
-        const updatedLikeCount = like + 1;
+        const updatedLikeCount = isLiked ? like - 1 : like + 1;
         setLike(updatedLikeCount); // Cập nhật trạng thái like ngay lập tức
+        setIsLiked(!isLiked);
         mutation.mutate({ likeCount: updatedLikeCount }); // Gọi API cập nhật likeCount
+
+        const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+        likedPosts[post._id] = !isLiked;
+        localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
     }
     const handleModal = () => {
         setModalOpen(true);
     }
 
+    const handleUpdatePost = (newPost) => {
+        setModalOpen(false)
+        setUpdatePost(newPost)
+    }
+
     useEffect(() => {
+        const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
+        setIsLiked(likedPosts[post._id] || false);
         setLike(post.likeCount);
-    }, [post.likeCount]);
+    }, [post.likeCount , post._id]);
 
     return (
         <>
@@ -44,9 +57,9 @@ export default function Post({ post }) {
                 <UpdatePost
                     open={modalOpen}
                     title="Update Post"
-                    onOk={() => setModalOpen(false)}
+                    onOk={(newPost) => handleUpdatePost(newPost)}
                     onCancel={() => setModalOpen(false)}
-                    posts={post}
+                    posts={updatePost}
                 />
             )}
             <Card
@@ -72,7 +85,11 @@ export default function Post({ post }) {
                 <p>{post.content}</p>
 
                 <div className="flex mt-5">
-                    <LikeOutlined onClick={handleLike}/>
+                    {isLiked ? (
+                        <LikeFilled  onClick={handleLike} style={{ color: '#00CCFF' }} />
+                    ) : (
+                        <LikeFilled  onClick={handleLike} style={{ color: 'gray' }}/>
+                    )}
                     <p>{like} like</p>
                 </div>
             </Card>

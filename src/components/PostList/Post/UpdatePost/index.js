@@ -5,7 +5,7 @@ import { useMutationHooks } from '../../../../hooks/useMutation';
 
 const { TextArea } = Input;
 
-export default function UpdatePost({ open, onOk, onCancel, title, posts }) {
+export default function UpdatePost({ open,onOk, onCancel, title, posts }) {
 
     const [data, setData] = useState({
         title: posts.title,
@@ -13,26 +13,25 @@ export default function UpdatePost({ open, onOk, onCancel, title, posts }) {
     });
 
     const mutation = useMutationHooks(
-        data => api.updatePost(data, posts._id),
+        data => api.updatePost(posts._id ,data),
         {
-            onSuccess: () => {
-                window.location.reload();
+            onSuccess: (data) => {
+                onOk(data);
             }
         }
     );
 
     const handleSubmitModal = () => {
-        onOk(() => mutation.mutate(data));
+        mutation.mutate(data);
     };
 
     return (
         <Modal
             centered
             title={title}
-            visible={open} // Changed 'open' to 'visible'
             onOk={handleSubmitModal}
             onCancel={onCancel}
-
+            open={open}
             okButtonProps={{ style: { backgroundColor: '#00CCFF' }}}
         >
             <div>

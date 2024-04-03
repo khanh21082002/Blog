@@ -2,10 +2,16 @@ import axios from "axios";
 
 const URL = "http://localhost:5000";
 
-export const getAllPost = async () => {
-    const res = await axios.get(`${URL}/posts`)
-    return res
-}
+export const getAllPosts = async (page, limit) => {
+    try {
+        const res = await axios.get(`${URL}/posts`, {
+            params: { page: page, limit: limit }
+        });
+        return res.data;
+    } catch (error) {
+        throw new Error(error.message);
+    }
+};
 
 export const createPost = async (data) => {
     const res = await axios.post(`${URL}/posts`, data)
