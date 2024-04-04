@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     title: '',
     content: '',
-    author: 'admin',
+    author: 'Admin',
     likeCount: 0,
 };
 

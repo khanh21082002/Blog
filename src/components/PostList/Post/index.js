@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Card, Avatar } from 'antd';
+import { Card, Avatar, Popover } from 'antd';
 import moment from 'moment'
 import * as api from '../../../api/index';
 import { useMutationHooks } from '../../../hooks/useMutation';
 
-import { UserOutlined, LikeFilled, SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
+import { UserOutlined, LikeFilled, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import UpdatePost from "./UpdatePost";
 
 export default function Post({ post }) {
@@ -13,16 +13,16 @@ export default function Post({ post }) {
     const [isLiked, setIsLiked] = useState(false);
     const [modalOpen, setModalOpen] = useState(false);
     const [updatePost, setUpdatePost] = useState(post);
-   
-   const mutation = useMutationHooks(
-       (data) => api.updatePost( post._id , data,),
-       {
-           onSuccess: (data) => {
-               // Cập nhật trạng thái like sau khi mutation thành công
-               setLike(data.likeCount);
-           }
-       }
-   );
+
+    const mutation = useMutationHooks(
+        (data) => api.updatePost(post._id, data,),
+        {
+            onSuccess: (data) => {
+                // Cập nhật trạng thái like sau khi mutation thành công
+                setLike(data.likeCount);
+            }
+        }
+    );
 
 
 
@@ -44,12 +44,16 @@ export default function Post({ post }) {
         setModalOpen(false)
         setUpdatePost(newPost)
     }
+    const handleDeletePost = async () => {
+        await api.deletePost(post._id);
+        window.location.reload();
+    }
 
     useEffect(() => {
         const likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
         setIsLiked(likedPosts[post._id] || false);
         setLike(post.likeCount);
-    }, [post.likeCount , post._id]);
+    }, [post.likeCount, post._id]);
 
     return (
         <>
@@ -73,10 +77,20 @@ export default function Post({ post }) {
                 </div>}
 
                 actions={[
-
-                    <SettingOutlined key="setting" />,
                     <EditOutlined key="edit" onClick={handleModal} />,
-                    <EllipsisOutlined key="ellipsis" />,
+                    <Popover
+                        content={(
+                            <button onClick={() => {
+                                if (window.confirm('Bạn có muốn xóa blog này không?')) {
+                                    handleDeletePost();
+                                }
+                            }} className="text-red-500">Delete</button>
+                        )}
+                        trigger="click"
+                    >
+                        <EllipsisOutlined key="ellipsis" />
+                    </Popover>
+
                 ]}
 
                 className="mb-0"
@@ -86,9 +100,9 @@ export default function Post({ post }) {
 
                 <div className="flex mt-5">
                     {isLiked ? (
-                        <LikeFilled  onClick={handleLike} style={{ color: '#00CCFF' }} />
+                        <LikeFilled onClick={handleLike} style={{ color: '#00CCFF' }} />
                     ) : (
-                        <LikeFilled  onClick={handleLike} style={{ color: 'gray' }}/>
+                        <LikeFilled onClick={handleLike} style={{ color: 'gray' }} />
                     )}
                     <p>{like} like</p>
                 </div>

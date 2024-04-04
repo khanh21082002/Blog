@@ -23,3 +23,7 @@ export const updatePost = async (id, data) => {
     return res
 }
 
+export const deletePost = async (id) => {
+    const res = await axios.delete(`${URL}/posts/delete/${id}`)
+    return res
+}

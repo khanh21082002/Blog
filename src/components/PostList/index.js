@@ -25,7 +25,7 @@ export default function PostList() {
             }
         };
 
-        fetchAllPosts();
+        fetchAllPosts();    
     }, [page, limit]);
     return (
         <>
