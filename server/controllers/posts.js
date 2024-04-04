@@ -2,7 +2,7 @@ import { PostModel } from "../models/PostModel.js";
 
 export const getPosts = async (req, res) => {
     const page = parseInt(req.query.page) || 1; // Lấy trang từ yêu cầu, mặc định là trang 1
-    const limit = parseInt(req.query.limit) || 6; // Lấy số lượng bài viết trên mỗi trang từ yêu cầu, mặc định là 10 bài viết
+    const limit = parseInt(req.query.limit) || 6;
 
     const startIndex = (page - 1) * limit;
 
@@ -60,8 +60,8 @@ export const updatePosts = async (req, res) => {
 export const deletePosts = async (req, res) => {
     try {
         const deletePost = req.body;
-        const post = await PostModel.findByIdAndDelete({ _id: deletePost._id })
-        res.json(post)
+        const post = await PostModel.findByIdAndDelete({ _id: req.params.id })
+        res.status(200).json({ message: "Delete successfully" })
     } catch (error) {
         res.status(404).json({ message: error.message })
     }

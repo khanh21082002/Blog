@@ -14,7 +14,7 @@ const schema = new mongoose.Schema({
     author:{
         type : String,
         required : true,
-        default : 'admin'
+        default : 'Admin'
     },
 
     attachment : String,
