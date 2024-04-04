@@ -9,7 +9,7 @@ import Post from "./Post";
 
 export default function PostList() {
     const [posts, setPosts] = useState([]);
-    const [page, setPage] = useState(2);
+    const [page, setPage] = useState(1);
     const [totalPages, setTotalPages] = useState(0);
     const limit = 6;
     
@@ -26,9 +26,7 @@ export default function PostList() {
         };
 
         fetchAllPosts();
-    }, [page, limit , totalPages]);
-
-    console.log(totalPages)
+    }, [page, limit]);
     return (
         <>
             <div className='grid grid-cols-2 gap-4'>
@@ -36,9 +34,8 @@ export default function PostList() {
                     <Post key={post._id} post={post} />
                 ))}
             </div>
-
             <div className='flex justify-center my-10'>
-                <Pagination current={page} onChange={(page) => setPage(page)} total={totalPages} />
+                <Pagination current={page} onChange={(page) => setPage(page)}  defaultPageSize={limit} total={totalPages*limit}/>
             </div>
         </>
     )
